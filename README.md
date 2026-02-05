@@ -4,8 +4,12 @@
 
 Githrun is a powerful CLI tool and Python library that lets you run, explore, and install Python code directly from GitHub and Gists. It handles dependencies, private repositories, and even turns remote scripts into local command-line tools.
 
-[![PyPI version](https://badge.fury.io/py/githrun.svg)](https://badge.fury.io/py/githrun)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![PyPI version](https://img.shields.io/pypi/v/githrun.svg)](https://pypi.org/project/githrun/)
+[![Python](https://img.shields.io/pypi/pyversions/githrun.svg)](https://pypi.org/project/githrun/)
+[![License](https://img.shields.io/github/license/notamitgamer/githrun)](https://github.com/notamitgamer/githrun/blob/main/LICENSE)
+[![Downloads](https://pepy.tech/badge/githrun)](https://pepy.tech/project/githrun)
+[![Last Commit](https://img.shields.io/github/last-commit/notamitgamer/githrun)](https://github.com/notamitgamer/githrun/commits/main)
+[![Contributors](https://img.shields.io/github/contributors/notamitgamer/githrun)](https://github.com/notamitgamer/githrun/graphs/contributors)
 
 ## Features
 
