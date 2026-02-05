@@ -1,16 +1,24 @@
-# Pyrgo 
+# Pyrgo
 
-> **Execute Python code directly from GitHub, explore remote repositories, and find files instantly.**
+> The Swiss Army Knife for Remote Python Execution.
 
-Pyrgo is a lightweight CLI tool that turns GitHub into your remote Python interpreter. Whether you want to quickly test a script without cloning a massive repo, inspect a file's content, or map out a project structure, Pyrgo handles it in seconds.
+Pyrgo is a powerful CLI tool and Python library that lets you run, explore, and install Python code directly from GitHub and Gists. It handles dependencies, private repositories, and even turns remote scripts into local command-line tools.
+
+[![PyPI version](https://badge.fury.io/py/pyrgo.svg)](https://badge.fury.io/py/pyrgo)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Features
 
-* **Remote Execution**: Run Python scripts directly from raw GitHub URLs.
-* **Safety First**: Inspect code before execution to ensure no malicious activity.
-* **Repo Exploration**: View the contents of remote folders without leaving your terminal.
-* **Deep Search**: Find specific files inside complex repositories instantly.
-* **Smart Caching**: (Coming Soon) Caches files locally to save bandwidth.
+* **Remote Execution**: Run scripts from GitHub or Gist URLs instantly.
+* **Auto-Dependency Management**: Automatically creates temporary virtual environments and installs missing packages using the `--auto-install` flag.
+* **Private Repo Access**: Authenticate securely with GitHub tokens to access private code and increase API rate limits.
+* **Bookmarks**: Save long URLs as short aliases (e.g., `pyrgo run clean-db`).
+* **Tool Installation**: Install remote scripts as permanent local CLI commands available in your system path.
+* **Recursive Downloads**: Download entire folders or specific sub-directories from a repository.
+* **Interactive Search**: Search for files in a repo and run them immediately from the results.
+* **Smart Caching**: Caches API responses to speed up repeated searches and reduce API usage.
+
+---
 
 ## Installation
 
@@ -18,50 +26,132 @@ Pyrgo is a lightweight CLI tool that turns GitHub into your remote Python interp
 pip install pyrgo
 ```
 
-## Usage
+---
 
-### 1. Run a Script
-Don't clone the whole repo just to run one file.
+## CLI Usage
 
+### 1. Run Remote Code
+Execute a script directly from a URL.
+
+**Basic Execution:**
 ```bash
-# Basic run
-pyrgo run [https://github.com/notamitgamer/adpkg/blob/main/test1.py](https://github.com/notamitgamer/adpkg/blob/main/test1.py)
-
-# Inspect source code before running (Recommended)
-pyrgo run [https://github.com/notamitgamer/adpkg/blob/main/test1.py](https://github.com/notamitgamer/adpkg/blob/main/test1.py) --inspect
+pyrgo run [https://github.com/user/repo/blob/main/script.py](https://github.com/user/repo/blob/main/script.py)
 ```
 
-### 2. Show Folder Structure
-Visualize what's inside a remote directory.
-
+**Run Gists:**
 ```bash
-pyrgo show [https://github.com/notamitgamer/adpkg/tree/main/subfolder](https://github.com/notamitgamer/adpkg/tree/main/subfolder)
+pyrgo run [https://gist.github.com/user/1234567890abcdef](https://gist.github.com/user/1234567890abcdef)
 ```
 
-### 3. Find a File
-Searching for a config file or specific logic?
-
+**Auto-Install Dependencies:**
+If a remote script requires packages you do not have installed (e.g., pandas, requests), use this flag to run it in an isolated environment:
 ```bash
-# Syntax: pyrgo find <repo-url> <filename-or-extension>
-pyrgo find [https://github.com/notamitgamer/adpkg](https://github.com/notamitgamer/adpkg) "config.py"
-pyrgo find [https://github.com/notamitgamer/adpkg](https://github.com/notamitgamer/adpkg) ".json"
+pyrgo run [https://github.com/user/repo/blob/main/data.py](https://github.com/user/repo/blob/main/data.py) --auto-install
 ```
 
-## Development
+**Inspect Code:**
+View the source code with syntax highlighting before running it (Safety Check):
+```bash
+pyrgo run [https://github.com/user/repo/blob/main/script.py](https://github.com/user/repo/blob/main/script.py) --inspect
+```
 
-We use `poetry` for dependency management.
+### 2. Authentication (Private Repos & Rate Limits)
+GitHub limits unauthenticated requests to 60 per hour. Login to increase this limit to 5,000 and access private repositories.
 
-1.  Clone the repo.
-2.  Install dependencies: `poetry install`
-3.  Run the CLI locally: `poetry run pyrgo --help`
+```bash
+pyrgo login ghp_YourPersonalAccessToken...
+```
+*The token is stored securely in `~/.pyrgo/config.json`.*
 
-## Contributing
+### 3. Bookmarks
+Stop copy-pasting long URLs. Save them once, run them anywhere.
 
-Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) to get started.
+**Add a Bookmark:**
+```bash
+pyrgo bookmark add clean-db [https://github.com/user/repo/blob/main/utils/cleanup.py](https://github.com/user/repo/blob/main/utils/cleanup.py)
+```
 
-## Security
+**Run a Bookmark:**
+```bash
+pyrgo run clean-db
+```
 
-Found a bug? Please check our [Security Policy](SECURITY.md).
+**List Bookmarks:**
+```bash
+pyrgo bookmark list
+```
+
+### 4. Install as a Tool
+Turn a remote Python script into a command you can run from anywhere in your terminal.
+
+```bash
+pyrgo install [https://github.com/user/repo/blob/main/my-tool.py](https://github.com/user/repo/blob/main/my-tool.py) --name mytool
+```
+
+* **Windows:** Creates a `.bat` file in `~/.pyrgo/bin`.
+* **Linux/Mac:** Creates an executable shim in `~/.pyrgo/bin`.
+* *Note: You must add `~/.pyrgo/bin` to your system PATH.*
+
+### 5. Find & Search
+Search for files inside a remote repository without cloning it.
+
+```bash
+# Search for files containing "config"
+pyrgo find [https://github.com/user/repo](https://github.com/user/repo) "config"
+```
+*This command is interactive. You can select a result number to run it immediately.*
+
+### 6. Download Files & Folders
+Download artifacts to your local machine.
+
+**Download a single file:**
+```bash
+pyrgo download [https://github.com/user/repo/blob/main/script.py](https://github.com/user/repo/blob/main/script.py)
+```
+
+**Download a specific folder (Recursive):**
+```bash
+pyrgo download [https://github.com/user/repo/tree/main/src/utils](https://github.com/user/repo/tree/main/src/utils) --output ./local_utils
+```
+
+### 7. Show Folder Contents
+List files in a remote directory to understand the structure.
+
+```bash
+pyrgo show [https://github.com/user/repo/tree/main/src](https://github.com/user/repo/tree/main/src)
+```
+
+---
+
+## Python API Usage
+
+You can use Pyrgo inside your own Python scripts.
+
+```python
+import pyrgo
+
+# 1. Search a repository
+results = pyrgo.search_repository("[https://github.com/user/repo](https://github.com/user/repo)", "test")
+for item in results:
+    print(item['path'], item['raw_url'])
+
+# 2. Download a file
+pyrgo.download_file("[https://github.com/user/repo/blob/main/script.py](https://github.com/user/repo/blob/main/script.py)", output_path="script.py")
+
+# 3. Download a full folder
+pyrgo.download_folder("[https://github.com/user/repo/tree/main/src](https://github.com/user/repo/tree/main/src)")
+
+# 4. Execute code programmatically
+exit_code = pyrgo.execute_remote_code("[https://github.com/user/repo/blob/main/script.py](https://github.com/user/repo/blob/main/script.py)", args=["--verbose"])
+```
+
+## Configuration
+
+Pyrgo stores configuration and cache files in your home directory:
+
+* **Config:** `~/.pyrgo/config.json` (Tokens, Bookmarks)
+* **Cache:** `~/.pyrgo/cache/` (API responses)
+* **Binaries:** `~/.pyrgo/bin/` (Installed tools)
 
 ## License
 

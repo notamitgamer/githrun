@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "pyrgo"
+version = "0.1.0"
+description = "A CLI tool to run Python scripts directly from GitHub URLs"
+authors = ["Amit Dutta <mail@amit.is-a.dev>"]
+readme = "README.md"
+packages = [{include = "pyrgo", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+# Cleaned up typer definition (removed deprecated 'all' extra)
+typer = "^0.12.0"
+# Pin click to <8.2.0 to prevent crash with newer API changes
+click = "<8.2.0"
+requests = "^2.31.0"
+rich = "^13.7.0"
+
+[tool.poetry.scripts]
+pyrgo = "pyrgo.cli:app"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
