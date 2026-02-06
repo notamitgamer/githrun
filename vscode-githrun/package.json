@@ -1,0 +1,84 @@
+{
+  "name": "vscode-githrun",
+  "displayName": "Githrun",
+  "description": "Instantly run Python scripts from GitHub URLs directly in VS Code.",
+  "version": "0.0.1",
+  "publisher": "notamitgamer",
+  "icon": "icon.png",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/notamitgamer/githrun.git"
+  },
+  "categories": [
+    "Other",
+    "Programming Languages"
+  ],
+  "keywords": [
+    "python",
+    "github",
+    "gist",
+    "script",
+    "runner",
+    "remote"
+  ],
+  "activationEvents": [
+    "onLanguage:markdown",
+    "onLanguage:python",
+    "onLanguage:plaintext"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "githrun.runUrl",
+        "title": "Run with Githrun",
+        "icon": "$(play)"
+      },
+      {
+        "command": "githrun.installCli",
+        "title": "Install Githrun CLI"
+      },
+      {
+        "command": "githrun.runInput",
+        "title": "Githrun: Run from URL..."
+      },
+      {
+        "command": "githrun.runSelection",
+        "title": "Githrun: Run Selected Text"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "githrun.runSelection",
+          "group": "githrun",
+          "when": "editorHasSelection"
+        }
+      ]
+    },
+    "configuration": {
+      "type": "object",
+      "title": "Githrun",
+      "properties": {
+        "githrun.autoInstallDeps": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically use --auto-install when running scripts."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.80.0",
+    "@types/node": "16.x",
+    "typescript": "^5.0.0"
+  }
+}
