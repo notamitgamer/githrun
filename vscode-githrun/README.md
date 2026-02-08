@@ -1,15 +1,49 @@
 # Githrun
 
-> The Swiss Army Knife for Remote Python Execution.
+Githrun is a versatile command-line tool and VS Code extension that enables you to execute, explore, and install Python scripts directly from GitHub and Gists. It streamlines remote execution by handling dependencies, private repositories, and local tool installation.
 
-Githrun is a powerful CLI tool and Python library that lets you run, explore, and install Python code directly from GitHub and Gists. It handles dependencies, private repositories, and even turns remote scripts into local command-line tools.
+[![PyPI version](https://img.shields.io/pypi/v/githrun.svg)](https://pypi.org/project/githrun/) [![Python](https://img.shields.io/pypi/pyversions/githrun.svg)](https://pypi.org/project/githrun/) [![License](https://img.shields.io/github/license/notamitgamer/githrun)](https://github.com/notamitgamer/githrun/blob/main/LICENSE) [![Downloads](https://pepy.tech/badge/githrun)](https://pepy.tech/project/githrun) [![Last Commit](https://img.shields.io/github/last-commit/notamitgamer/githrun)](https://github.com/notamitgamer/githrun/commits/main) [![Contributors](https://img.shields.io/github/contributors/notamitgamer/githrun)](https://github.com/notamitgamer/githrun/graphs/contributors)
 
-[![PyPI version](https://img.shields.io/pypi/v/githrun.svg)](https://pypi.org/project/githrun/)
-[![Python](https://img.shields.io/pypi/pyversions/githrun.svg)](https://pypi.org/project/githrun/)
-[![License](https://img.shields.io/github/license/notamitgamer/githrun)](https://github.com/notamitgamer/githrun/blob/main/LICENSE)
-[![Downloads](https://pepy.tech/badge/githrun)](https://pepy.tech/project/githrun)
-[![Last Commit](https://img.shields.io/github/last-commit/notamitgamer/githrun)](https://github.com/notamitgamer/githrun/commits/main)
-[![Contributors](https://img.shields.io/github/contributors/notamitgamer/githrun)](https://github.com/notamitgamer/githrun/graphs/contributors)
+---
+
+# VS Code Extension
+
+## Extension Installation & Setup
+
+### 1. Install the Extension
+* **Marketplace:** Search for "Githrun" in the VS Code Extensions view and click Install.
+* **Manual:** If installing from a VSIX file, go to Extensions -> ... -> Install from VSIX.
+
+### 2. Install the Core CLI (Required)
+This extension acts as a bridge to the Githrun command-line tool. You **must** have the Githrun CLI installed on your system.
+
+Open your terminal and run:
+
+```bash
+pip install githrun
+```
+
+## Extension Features & Usage
+
+### CodeLens Integration
+The extension automatically scans Markdown, Python, and Text files for GitHub or Gist URLs.
+* **Action:** Look for the "Run with Githrun" link appearing above any detected URL.
+* **Click:** Clicking the link opens a terminal and executes the script immediately.
+
+### Context Menu
+* **Action:** Highlight any GitHub URL in your editor.
+* **Click:** Right-click the selection and choose **Githrun: Run Selected Text**.
+
+### Command Palette
+* **Action:** Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac).
+* **Command:** Type `Githrun: Run from URL...` and paste your target link into the input box.
+
+## Extension Settings
+The extension attempts to automatically detect your Githrun installation.
+* It first checks for `githrun` in your global PATH.
+* If not found, it tries `python -m githrun` (or `python3` on Mac/Linux).
+
+---
 
 ## Features
 
@@ -21,14 +55,6 @@ Githrun is a powerful CLI tool and Python library that lets you run, explore, an
 * **Recursive Downloads**: Download entire folders or specific sub-directories from a repository.
 * **Interactive Search**: Search for files in a repo and run them immediately from the results.
 * **Smart Caching**: Caches API responses to speed up repeated searches and reduce API usage.
-
----
-
-## Installation
-
-```bash
-pip install githrun
-```
 
 ---
 
@@ -148,6 +174,8 @@ githrun.download_folder("[https://github.com/user/repo/tree/main/src](https://gi
 # 4. Execute code programmatically
 exit_code = githrun.execute_remote_code("[https://github.com/user/repo/blob/main/script.py](https://github.com/user/repo/blob/main/script.py)", args=["--verbose"])
 ```
+
+---
 
 ## Configuration
 
