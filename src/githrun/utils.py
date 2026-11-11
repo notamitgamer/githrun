@@ -126,9 +126,16 @@ def check_package_installed(package_name: str) -> bool:
 class VenvManager:
     """Manages temporary virtual environments for auto-installing dependencies."""
     
-    def __init__(self):
-        self.temp_dir = tempfile.mkdtemp(prefix="githrun_env_")
-        self.venv_dir = Path(self.temp_dir)
+    def __init__(self, venv_dir: Optional[Path] = None):
+        # venv_dir given -> persistent venv (used by `install --auto-install`).
+        # No venv_dir     -> throw-away temp venv (used by `run --auto-install`).
+        self.persistent = venv_dir is not None
+        if self.persistent:
+            self.temp_dir = None
+            self.venv_dir = Path(venv_dir)
+        else:
+            self.temp_dir = tempfile.mkdtemp(prefix="githrun_env_")
+            self.venv_dir = Path(self.temp_dir)
         self.python_exe = self._get_python_exe()
         self.pip_exe = self._get_pip_exe()
 
@@ -144,8 +151,13 @@ class VenvManager:
 
     def create(self):
         """Creates the virtual environment."""
-        console.print("[blue]Creating temporary virtual environment...[/blue]")
-        venv.create(self.venv_dir, with_pip=True)
+        if self.persistent:
+            console.print(f"[blue]Creating virtual environment at {self.venv_dir}...[/blue]")
+            # Keep system packages visible so only truly missing ones are installed.
+            venv.create(self.venv_dir, with_pip=True, clear=True, system_site_packages=True)
+        else:
+            console.print("[blue]Creating temporary virtual environment...[/blue]")
+            venv.create(self.venv_dir, with_pip=True)
 
     def install(self, packages: list):
         """Installs packages into the venv."""
@@ -155,7 +167,9 @@ class VenvManager:
         subprocess.check_call([str(self.pip_exe), "install"] + packages, stdout=subprocess.DEVNULL)
 
     def cleanup(self):
-        """Deletes the virtual environment."""
+        """Deletes a temporary virtual environment (persistent ones are kept)."""
+        if self.persistent:
+            return
         shutil.rmtree(self.temp_dir, ignore_errors=True)
 
 # Standard Helpers

@@ -1,0 +1,10 @@
+node_modules/
+__pycache__/
+*.pyc
+dist/
+build/
+*.egg-info/
+*.vsix
+vscode-githrun/out/
+.venv/
+.DS_Store

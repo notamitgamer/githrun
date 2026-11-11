@@ -17,7 +17,7 @@ DOWNLOAD_TARGET = "test_download_artifact.py"
 def print_header(title):
     console.print(Panel(f"[bold white]{title}[/bold white]", style="bold blue"))
 
-def test_cli_command(cmd, description):
+def run_cli_command(cmd, description):
     console.print(f"\n[bold cyan]🔹 Testing CLI: {description}[/bold cyan]")
     console.print(f"[dim]Command: {cmd}[/dim]")
     
@@ -81,33 +81,33 @@ def main():
     # --- CLI TESTS ---
     
     # 1. Help Command
-    test_cli_command("githrun --help", "Help Menu")
+    run_cli_command("githrun --help", "Help Menu")
 
     # 2. Run Command (Non-interactive)
     # --yes skips the confirmation prompt
-    test_cli_command(f"githrun run {TEST_FILE} --yes", "Run Remote Script")
+    run_cli_command(f"githrun run {TEST_FILE} --yes", "Run Remote Script")
 
     # 3. Inspect Mode
     # Should print code but not run it
-    test_cli_command(f"githrun run {TEST_FILE} --inspect", "Inspect Code")
+    run_cli_command(f"githrun run {TEST_FILE} --inspect", "Inspect Code")
 
     # 4. Show Folder
-    test_cli_command(f"githrun show {TEST_FOLDER}", "Show Folder Contents")
+    run_cli_command(f"githrun show {TEST_FOLDER}", "Show Folder Contents")
 
     # 5. Find File (Non-interactive)
     # Typer converts `interactive=True` to a flag `--no-interactive`
-    test_cli_command(f"githrun find {TEST_REPO} test --no-interactive", "Find File")
+    run_cli_command(f"githrun find {TEST_REPO} test --no-interactive", "Find File")
 
     # 6. Download
-    test_cli_command(f"githrun download {TEST_FILE} -o {DOWNLOAD_TARGET}", "Download File")
+    run_cli_command(f"githrun download {TEST_FILE} -o {DOWNLOAD_TARGET}", "Download File")
     if os.path.exists(DOWNLOAD_TARGET):
         console.print("[dim]   Verifying file existence... OK (Deleting now)[/dim]")
         os.remove(DOWNLOAD_TARGET)
 
     # 7. Bookmarks
-    test_cli_command(f"githrun bookmark add test-bm {TEST_FILE}", "Add Bookmark")
-    test_cli_command("githrun bookmark list", "List Bookmarks")
-    test_cli_command("githrun run test-bm --yes", "Run from Bookmark")
+    run_cli_command(f"githrun bookmark add test-bm {TEST_FILE}", "Add Bookmark")
+    run_cli_command("githrun bookmark list", "List Bookmarks")
+    run_cli_command("githrun run test-bm --yes", "Run from Bookmark")
 
     # --- API TESTS ---
     test_python_api()

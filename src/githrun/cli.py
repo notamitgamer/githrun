@@ -64,13 +64,14 @@ def login(token: str = typer.Argument(..., help="Your GitHub Personal Access Tok
 @app.command()
 def install(
     url: str = typer.Argument(..., help="URL of the script."),
-    name: str = typer.Option(..., "--name", "-n", help="Name of the command tool.")
+    name: str = typer.Option(..., "--name", "-n", help="Name of the command tool."),
+    auto_install: bool = typer.Option(False, "--auto-install", help="Install missing dependencies into a dedicated virtual environment for this tool.")
 ):
     """
     Install a remote script as a local command-line tool.
     """
     try:
-        msg = install_tool(url, name)
+        msg = install_tool(url, name, auto_install=auto_install)
         print_success(msg)
     except Exception as e:
         print_error(str(e))
