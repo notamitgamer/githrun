@@ -6,6 +6,7 @@ import platform
 import stat
 from pathlib import Path
 from typing import List, Dict, Optional
+from urllib.parse import urlparse
 from .network import (
     convert_to_raw_url, 
     fetch_url_content, 
