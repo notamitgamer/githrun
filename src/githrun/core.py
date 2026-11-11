@@ -6,7 +6,6 @@ import platform
 import stat
 from pathlib import Path
 from typing import List, Dict, Optional
-from urllib.parse import urlparse
 from .network import (
     convert_to_raw_url, 
     fetch_url_content, 
@@ -20,7 +19,8 @@ from .utils import (
     check_package_installed, 
     ConfigManager, 
     VenvManager, 
-    BIN_DIR
+    BIN_DIR,
+    APP_DIR
 )
 
 def resolve_url(url: str) -> str:
@@ -79,8 +79,13 @@ def execute_remote_code(url: str, args: List[str] = None, auto_install: bool = F
             result = subprocess.run(cmd, capture_output=False)
             return result.returncode
 
-def install_tool(url: str, name: str) -> str:
-    """Installs a remote script as a local command."""
+def install_tool(url: str, name: str, auto_install: bool = False) -> str:
+    """Installs a remote script as a local command.
+
+    With auto_install, the script's missing dependencies are installed into a
+    dedicated virtual environment (APP_DIR/envs/<name>) and the command runs
+    with that environment's Python, so the system Python stays untouched.
+    """
     full_url = resolve_url(url)
     raw_url = convert_to_raw_url(full_url)
     content = fetch_url_content(raw_url)
@@ -91,23 +96,34 @@ def install_tool(url: str, name: str) -> str:
     target_path = BIN_DIR / f"{name}.py"
     with open(target_path, "w", encoding="utf-8") as f:
         f.write(content)
+
+    python_exe = sys.executable
+    env_note = ""
+    if auto_install:
+        missing_deps = scan_dependencies(content)
+        if missing_deps:
+            manager = VenvManager(APP_DIR / "envs" / name)
+            manager.create()
+            manager.install(missing_deps)
+            python_exe = str(manager.python_exe)
+            env_note = f"\nDependencies installed in {manager.venv_dir}: {', '.join(missing_deps)}"
         
     # Create executable shim
     if platform.system() == "Windows":
         bat_path = BIN_DIR / f"{name}.bat"
         with open(bat_path, "w") as f:
-            f.write(f'@echo off\n"{sys.executable}" "{target_path}" %*')
+            f.write(f'@echo off\n"{python_exe}" "{target_path}" %*')
         final_msg = f"Installed {name} to {BIN_DIR}.\nAdd this folder to your PATH to run it via `{name}`."
     else:
         # Linux/Mac
         shim_path = BIN_DIR / name
         with open(shim_path, "w") as f:
-            f.write(f'#!/bin/sh\n"{sys.executable}" "{target_path}" "$@"')
+            f.write(f'#!/bin/sh\n"{python_exe}" "{target_path}" "$@"')
         st = os.stat(shim_path)
         os.chmod(shim_path, st.st_mode | stat.S_IEXEC)
         final_msg = f"Installed {name} to {BIN_DIR}.\nAdd this folder to your PATH."
 
-    return final_msg
+    return final_msg + env_note
 
 def scan_dependencies(code: str) -> List[str]:
     imports = set()
